@@ -32,5 +32,5 @@ pub struct Job {
     pub freelancer: Address,
     pub budget: i128,
     pub status: JobStatus,
-    pub milestones: Vec<Milestone>,
+    pub milestones: Vec<i128>, // milestone amounts stored separately
 }
