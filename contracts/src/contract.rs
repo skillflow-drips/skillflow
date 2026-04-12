@@ -2,10 +2,14 @@ use soroban_sdk::{contract, contractimpl, token, Address, Env, Vec};
 use crate::errors::ContractError;
 use crate::storage::{
     get_treasury, get_commission_bps, get_job, set_job, get_milestone, set_milestone,
-    get_job_counter, increment_job_counter, is_initialized, set_initialized,
+    increment_job_counter, is_initialized, set_initialized,
     set_treasury, set_commission_bps,
 };
 use crate::types::{Job, Milestone, JobStatus, MilestoneStatus};
+use crate::events::{
+    InitializedEvent, EscrowFundedEvent, MilestoneApprovedEvent,
+    DisputeRaisedEvent, DisputeResolvedEvent, JobCancelledEvent,
+};
 
 #[contract]
 pub struct SkillFlowContract;
@@ -24,6 +28,8 @@ impl SkillFlowContract {
         set_treasury(&env, &treasury);
         set_commission_bps(&env, commission_bps);
         set_initialized(&env);
+
+        InitializedEvent { treasury, commission_bps }.publish(&env);
         Ok(())
     }
 
@@ -40,7 +46,7 @@ impl SkillFlowContract {
         client.require_auth();
 
         // Validate milestone amounts sum to total
-        let sum: i128 = milestone_amounts.iter().fold(0i128, |acc, a| acc + a);
+        let sum: i128 = milestone_amounts.iter().sum();
         if sum != total_amount {
             return Err(ContractError::BudgetMismatch);
         }
@@ -66,6 +72,13 @@ impl SkillFlowContract {
             let m = Milestone { amount, status: MilestoneStatus::Pending };
             set_milestone(&env, job_id, idx as u32, &m);
         }
+
+        EscrowFundedEvent {
+            job_id,
+            client: client.clone(),
+            freelancer: freelancer.clone(),
+            total_amount,
+        }.publish(&env);
 
         Ok(job_id)
     }
@@ -104,6 +117,14 @@ impl SkillFlowContract {
         milestone.status = MilestoneStatus::Approved;
         set_milestone(&env, job_id, milestone_id, &milestone);
 
+        MilestoneApprovedEvent {
+            job_id,
+            milestone_id,
+            freelancer: job.freelancer,
+            payout,
+            fee,
+        }.publish(&env);
+
         Ok(())
     }
 
@@ -129,6 +150,12 @@ impl SkillFlowContract {
 
         milestone.status = MilestoneStatus::Disputed;
         set_milestone(&env, job_id, milestone_id, &milestone);
+
+        DisputeRaisedEvent {
+            job_id,
+            milestone_id,
+            caller,
+        }.publish(&env);
 
         Ok(())
     }
@@ -171,6 +198,13 @@ impl SkillFlowContract {
         milestone.status = MilestoneStatus::Approved;
         set_milestone(&env, job_id, milestone_id, &milestone);
 
+        DisputeResolvedEvent {
+            job_id,
+            milestone_id,
+            client_share,
+            freelancer_share,
+        }.publish(&env);
+
         Ok(())
     }
 
@@ -196,6 +230,12 @@ impl SkillFlowContract {
 
         job.status = JobStatus::Completed; // mark closed to prevent double-refund
         set_job(&env, job_id, &job);
+
+        JobCancelledEvent {
+            job_id,
+            client,
+            amount: job.budget,
+        }.publish(&env);
 
         Ok(())
     }
