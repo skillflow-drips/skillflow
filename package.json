@@ -1,0 +1,27 @@
+{
+  "name": "skillflow",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Decentralized freelance escrow monorepo for Stellar and Soroban.",
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "dev": "pnpm --filter skillflow-frontend dev",
+    "dev:frontend": "pnpm --filter skillflow-frontend dev",
+    "dev:backend": "pnpm --filter skillflow-backend start:dev",
+    "build": "pnpm -r --if-present build",
+    "build:frontend": "pnpm --filter skillflow-frontend build",
+    "build:backend": "pnpm --filter skillflow-backend build",
+    "check": "pnpm run check:frontend && pnpm run check:backend && pnpm run check:contracts",
+    "check:frontend": "pnpm --filter skillflow-frontend typecheck",
+    "check:backend": "pnpm --filter skillflow-backend build",
+    "check:contracts": "cargo check --manifest-path contracts/Cargo.toml",
+    "lint": "pnpm -r --if-present lint",
+    "format": "pnpm -r --if-present format",
+    "prisma:generate": "pnpm --filter skillflow-backend prisma:generate",
+    "prisma:migrate": "pnpm --filter skillflow-backend prisma:migrate"
+  },
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "buildCommand": "pnpm --filter skillflow-frontend build",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "framework": "nextjs",
+  "outputDirectory": "frontend/.next"
+}
