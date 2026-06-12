@@ -7,7 +7,7 @@ export class IpfsService {
 
   async uploadFile(file: Buffer, fileName: string) {
     const formData = new FormData();
-    formData.append('file', new Blob([file]), fileName);
+    formData.append('file', new Blob([file.buffer as ArrayBuffer]), fileName);
 
     const res = await axios.post(this.pinataUrl, formData, {
       headers: {

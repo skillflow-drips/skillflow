@@ -14,11 +14,17 @@ export class TokensService {
     return this.prisma.$transaction([
       this.prisma.user.update({
         where: { id: userId },
-        data: { credits: { increment: tokensToCredit } }
+        data: { tokenBalance: { increment: tokensToCredit } },
       }),
       this.prisma.tokenPurchase.create({
-        data: { userId, amount: usdcAmount, tokens: tokensToCredit, txHash }
-      })
+        data: {
+          userId,
+          txHash,
+          usdcAmount,
+          tokensAwarded: tokensToCredit,
+          confirmed: true,
+        },
+      }),
     ]);
   }
 }

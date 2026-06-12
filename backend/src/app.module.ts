@@ -7,14 +7,18 @@ import { MilestonesModule } from './milestones/milestones.module';
 import { StellarModule } from './stellar/stellar.module';
 import { AuditModule } from './audit/audit.module';
 import { IpfsModule } from './ipfs/ipfs.module';
+import { ApplicationsModule } from './applications/applications.module';
+import { DisputesModule } from './disputes/disputes.module';
 
 @Module({
   imports: [
     AuthModule,
     UsersModule,
     JobsModule,
+    ApplicationsModule,
     TokensModule,
     MilestonesModule,
+    DisputesModule,
     StellarModule,
     AuditModule,
     IpfsModule,

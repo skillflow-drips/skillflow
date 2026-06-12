@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Query, Request, UseGuards } from '@nestjs/common';
 import { JobsService } from './jobs.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
@@ -8,17 +8,17 @@ export class JobsController {
 
   @Get()
   async findAll(@Query() filters: any) {
-    return this.jobsService.getPublicFeed(filters);
+    return this.jobsService.findAll(filters);
   }
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    return this.jobsService.getJobWithMilestones(id);
+    return this.jobsService.findById(id);
   }
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  async createJob(@Body() body: any) {
-    return this.jobsService.initializeProject(body);
+  async createJob(@Request() req: any, @Body() body: any) {
+    return this.jobsService.create(req.user.id, body);
   }
 }

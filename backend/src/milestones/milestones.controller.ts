@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Param, UseGuards, UnauthorizedException, Request } from '@nestjs/common';
+import { Controller, Post, Body, Param, UseGuards, Request } from '@nestjs/common';
 import { MilestonesService } from './milestones.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
@@ -8,9 +8,9 @@ export class MilestonesController {
 
   @UseGuards(JwtAuthGuard)
   @Post(':id/submit')
-  async submit(@Param('id') id: string, @Body() body: { proofUrl: string }) {
+  async submit(@Param('id') id: string, @Body() body: { proofUrl?: string; deliveryIpfsHash?: string }) {
     // Allows freelancers to submit their work for a specific milestone
-    return this.milestonesService.submitWork(id, body.proofUrl);
+    return this.milestonesService.submitWork(id, body.deliveryIpfsHash || body.proofUrl || '');
   }
 
   @UseGuards(JwtAuthGuard)

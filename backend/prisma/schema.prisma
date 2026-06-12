@@ -41,6 +41,7 @@ model Job {
   skills        String[]
   milestones    Milestone[]
   applications  Application[]
+  disputes      Dispute[]
   reviews       Review[]
   transactions  Transaction[]
   createdAt     DateTime      @default(now())
@@ -126,8 +127,38 @@ model Review {
   createdAt   DateTime @default(now())
 }
 
-enum JobStatus        { OPEN ASSIGNED IN_PROGRESS COMPLETED DISPUTED CANCELLED }
-enum MilestoneStatus  { PENDING SUBMITTED APPROVED DISPUTED }
-enum ApplicationStatus { PENDING ACCEPTED REJECTED }
-enum DisputeStatus    { OPEN UNDER_REVIEW RESOLVED }
-enum TransactionType  { ESCROW_FUND MILESTONE_RELEASE PLATFORM_FEE REFUND DISPUTE_SPLIT }
+enum JobStatus {
+  OPEN
+  ASSIGNED
+  IN_PROGRESS
+  COMPLETED
+  DISPUTED
+  CANCELLED
+}
+
+enum MilestoneStatus {
+  PENDING
+  SUBMITTED
+  APPROVED
+  DISPUTED
+}
+
+enum ApplicationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+enum DisputeStatus {
+  OPEN
+  UNDER_REVIEW
+  RESOLVED
+}
+
+enum TransactionType {
+  ESCROW_FUND
+  MILESTONE_RELEASE
+  PLATFORM_FEE
+  REFUND
+  DISPUTE_SPLIT
+}
