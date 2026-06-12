@@ -1,15 +1,14 @@
-use soroban_sdk::{contract, contractimpl, token, Address, Env, Vec};
 use crate::errors::ContractError;
-use crate::storage::{
-    get_treasury, get_commission_bps, get_job, set_job, get_milestone, set_milestone,
-    increment_job_counter, is_initialized, set_initialized,
-    set_treasury, set_commission_bps,
-};
-use crate::types::{Job, Milestone, JobStatus, MilestoneStatus};
 use crate::events::{
-    InitializedEvent, EscrowFundedEvent, MilestoneApprovedEvent,
-    DisputeRaisedEvent, DisputeResolvedEvent, JobCancelledEvent,
+    DisputeRaisedEvent, DisputeResolvedEvent, EscrowFundedEvent, InitializedEvent,
+    JobCancelledEvent, MilestoneApprovedEvent,
 };
+use crate::storage::{
+    get_commission_bps, get_job, get_milestone, get_treasury, increment_job_counter,
+    is_initialized, set_commission_bps, set_initialized, set_job, set_milestone, set_treasury,
+};
+use crate::types::{Job, JobStatus, Milestone, MilestoneStatus};
+use soroban_sdk::{Address, Env, Vec, contract, contractimpl, token};
 
 #[contract]
 pub struct SkillFlowContract;
@@ -29,7 +28,11 @@ impl SkillFlowContract {
         set_commission_bps(&env, commission_bps);
         set_initialized(&env);
 
-        InitializedEvent { treasury, commission_bps }.publish(&env);
+        InitializedEvent {
+            treasury,
+            commission_bps,
+        }
+        .publish(&env);
         Ok(())
     }
 
@@ -53,7 +56,7 @@ impl SkillFlowContract {
 
         // Pull USDC from client into the contract
         let token_client = token::Client::new(&env, &usdc_token);
-        token_client.transfer(&client, &env.current_contract_address(), &total_amount);
+        token_client.transfer(&client, env.current_contract_address(), &total_amount);
 
         // Assign job ID and store
         let job_id = increment_job_counter(&env);
@@ -69,7 +72,10 @@ impl SkillFlowContract {
 
         // Store individual milestones
         for (idx, amount) in milestone_amounts.iter().enumerate() {
-            let m = Milestone { amount, status: MilestoneStatus::Pending };
+            let m = Milestone {
+                amount,
+                status: MilestoneStatus::Pending,
+            };
             set_milestone(&env, job_id, idx as u32, &m);
         }
 
@@ -78,7 +84,8 @@ impl SkillFlowContract {
             client: client.clone(),
             freelancer: freelancer.clone(),
             total_amount,
-        }.publish(&env);
+        }
+        .publish(&env);
 
         Ok(job_id)
     }
@@ -98,8 +105,8 @@ impl SkillFlowContract {
             return Err(ContractError::NotAuthorized);
         }
 
-        let mut milestone = get_milestone(&env, job_id, milestone_id)
-            .ok_or(ContractError::JobNotFound)?;
+        let mut milestone =
+            get_milestone(&env, job_id, milestone_id).ok_or(ContractError::JobNotFound)?;
         if milestone.status != MilestoneStatus::Pending {
             return Err(ContractError::MilestoneNotPending);
         }
@@ -123,7 +130,8 @@ impl SkillFlowContract {
             freelancer: job.freelancer,
             payout,
             fee,
-        }.publish(&env);
+        }
+        .publish(&env);
 
         Ok(())
     }
@@ -142,8 +150,8 @@ impl SkillFlowContract {
             return Err(ContractError::NotAuthorized);
         }
 
-        let mut milestone = get_milestone(&env, job_id, milestone_id)
-            .ok_or(ContractError::JobNotFound)?;
+        let mut milestone =
+            get_milestone(&env, job_id, milestone_id).ok_or(ContractError::JobNotFound)?;
         if milestone.status != MilestoneStatus::Pending {
             return Err(ContractError::MilestoneNotPending);
         }
@@ -155,7 +163,8 @@ impl SkillFlowContract {
             job_id,
             milestone_id,
             caller,
-        }.publish(&env);
+        }
+        .publish(&env);
 
         Ok(())
     }
@@ -166,7 +175,7 @@ impl SkillFlowContract {
         arbitrator: Address,
         job_id: u64,
         milestone_id: u32,
-        client_bps: u32,      // portion to client (e.g. 5000 = 50%)
+        client_bps: u32, // portion to client (e.g. 5000 = 50%)
         usdc_token: Address,
     ) -> Result<(), ContractError> {
         arbitrator.require_auth();
@@ -177,8 +186,8 @@ impl SkillFlowContract {
         }
 
         let job = get_job(&env, job_id).ok_or(ContractError::JobNotFound)?;
-        let mut milestone = get_milestone(&env, job_id, milestone_id)
-            .ok_or(ContractError::JobNotFound)?;
+        let mut milestone =
+            get_milestone(&env, job_id, milestone_id).ok_or(ContractError::JobNotFound)?;
 
         if milestone.status != MilestoneStatus::Disputed {
             return Err(ContractError::InvalidStatus);
@@ -192,7 +201,11 @@ impl SkillFlowContract {
             token_client.transfer(&env.current_contract_address(), &job.client, &client_share);
         }
         if freelancer_share > 0 {
-            token_client.transfer(&env.current_contract_address(), &job.freelancer, &freelancer_share);
+            token_client.transfer(
+                &env.current_contract_address(),
+                &job.freelancer,
+                &freelancer_share,
+            );
         }
 
         milestone.status = MilestoneStatus::Approved;
@@ -203,7 +216,8 @@ impl SkillFlowContract {
             milestone_id,
             client_share,
             freelancer_share,
-        }.publish(&env);
+        }
+        .publish(&env);
 
         Ok(())
     }
@@ -235,7 +249,8 @@ impl SkillFlowContract {
             job_id,
             client,
             amount: job.budget,
-        }.publish(&env);
+        }
+        .publish(&env);
 
         Ok(())
     }
