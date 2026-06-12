@@ -9,12 +9,12 @@ interface ToastProps {
 
 export const Toast: React.FC<ToastProps> = ({ title, message, type }) => {
   return (
-    <div className="fixed bottom-8 right-8 w-80 glass p-6 rounded-2xl shadow-2xl border-l-4 border-l-blue-500 animate-in slide-in-from-right">
+    <div className="fixed bottom-8 right-8 w-80 rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[#111827] p-6 animate-in slide-in-from-right">
       <div className="flex justify-between items-center mb-2">
-        <h4 className="font-bold text-white text-sm">{title}</h4>
+        <h4 className="font-bold text-[#F9FAFB] text-sm">{title}</h4>
         <Badge variant={type === 'success' ? 'success' : 'info'}>{type}</Badge>
       </div>
-      <p className="text-xs text-gray-400 leading-relaxed">{message}</p>
+      <p className="text-xs leading-relaxed text-[#64748B]">{message}</p>
     </div>
   );
 };

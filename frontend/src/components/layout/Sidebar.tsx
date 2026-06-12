@@ -13,15 +13,15 @@ export const Sidebar = () => {
   ];
 
   return (
-    <div className="w-64 border-r border-white/10 bg-black/50 backdrop-blur-2xl h-screen sticky top-0 px-4 py-8 flex flex-col">
+    <div className="sticky top-0 flex h-screen w-64 flex-col border-r border-[rgba(255,255,255,0.08)] bg-[#0B0F1A] px-4 py-8">
       <div className="space-y-2 flex-1">
         {menuItems.map((item) => (
           <Link
             key={item.name}
             href={item.href}
-            className="flex items-center gap-4 px-4 py-3 rounded-xl text-gray-400 hover:bg-white/5 hover:text-white transition-all group"
+            className="group flex items-center gap-4 rounded-xl px-4 py-3 text-[#64748B] transition-all hover:bg-[#0B0F1A] hover:text-[#F9FAFB]"
           >
-            <item.icon className="w-5 h-5 group-hover:text-blue-400" />
+            <item.icon className="h-5 w-5 group-hover:text-[#7C3AED]" />
             <span className="font-medium text-sm">{item.name}</span>
           </Link>
         ))}

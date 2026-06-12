@@ -3,20 +3,27 @@
 @tailwind utilities;
 
 :root {
-  --primary: 221.2 83.2% 53.3%;
-  --background: 222.2 84% 4.9%;
-  --surface: 222.2 84% 12.6%;
-  --border: 217.2 32.6% 17.5%;
-  --accent: 199 89% 48%;
+  --background: #0B0F1A;
+  --surface: #111827;
+  --elevated: #111827;
+  --text: #F9FAFB;
+  --muted: #64748B;
+  --accent: #7C3AED;
+  --success: #10B981;
+  --border: rgba(255, 255, 255, 0.08);
 }
 
 body {
-  @apply bg-[#030712] text-white selection:bg-blue-500/30;
-  background-image: radial-gradient(at 0% 0%, rgba(30, 64, 175, 0.15) 0, transparent 50%),
-                    radial-gradient(at 100% 100%, rgba(59, 130, 246, 0.1) 0, transparent 50%);
-  background-attachment: fixed;
+  background: var(--background);
+  color: var(--text);
+  @apply selection:bg-[#7C3AED] selection:text-white;
 }
 
 .glass {
-  @apply backdrop-blur-xl bg-white/5 border border-white/10;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.hairline {
+  background: rgba(255, 255, 255, 0.08);
 }

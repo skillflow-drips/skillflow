@@ -1,42 +1,73 @@
 import React from 'react';
+import { CalendarDays, CheckCircle2, FileText, ShieldCheck } from 'lucide-react';
+import { Navbar } from '@/components/layout/Navbar';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 
-export default function JobDetailPage({ params }: { params: { id: string } }) {
+export default function JobDetailPage() {
   return (
-    <div className="container mx-auto py-12 px-6 flex flex-col lg:flex-row gap-12">
-      <div className="flex-1">
-        <header className="mb-8">
-          <Badge variant="success" className="mb-4">Fully Funded</Badge>
-          <h1 className="text-5xl font-extrabold text-white mb-4">Soroban Escrow Protocol</h1>
-          <p className="text-xl text-gray-400">Implement a multi-signature escrow system with milestone gates.</p>
-        </header>
+    <div className="min-h-screen bg-[#0B0F1A]">
+      <Navbar />
+      <main className="mx-auto grid max-w-7xl gap-8 px-5 py-10 lg:grid-cols-[1fr_360px]">
+        <section className="space-y-6">
+          <header className="rounded-[20px] border border-[rgba(255,255,255,0.08)] bg-[#0B0F1A] p-8">
+            <Badge variant="success" className="mb-5 w-fit">Fundable milestone scope</Badge>
+            <h1 className="text-4xl font-black tracking-tight text-[#F9FAFB] md:text-5xl">
+              Soroban escrow contract hardening
+            </h1>
+            <p className="mt-5 max-w-3xl text-base leading-7 text-[#64748B]">
+              Review and harden the escrow contract paths for milestone approval, dispute settlement, and cancellation refunds.
+            </p>
+          </header>
 
-        <section className="glass p-8 rounded-3xl mb-8">
-          <h2 className="text-2xl font-bold text-white mb-6">Project Roadmap</h2>
-          <div className="space-y-4">
-            <div className="flex justify-between p-4 bg-white/5 rounded-xl border border-white/5">
-              <span>Foundation & Types</span>
-              <span className="text-blue-400">$500 USDC</span>
+          <section className="rounded-[20px] border border-[rgba(255,255,255,0.08)] bg-[#0B0F1A] p-6">
+            <div className="flex items-center gap-3">
+              <FileText className="h-5 w-5 text-[#7C3AED]" />
+              <h2 className="text-xl font-black text-[#F9FAFB]">Milestone plan</h2>
             </div>
-            <div className="flex justify-between p-4 bg-white/5 rounded-xl border border-white/5">
-              <span>Smart Contract Implementation</span>
-              <span className="text-blue-400">$2000 USDC</span>
+            <div className="mt-6 space-y-3">
+              {[
+                ['Contract review and threat model', '500 USDC', '3 days'],
+                ['Authorization and fee-split fixes', '1,250 USDC', '5 days'],
+                ['Regression tests and deployment notes', '750 USDC', '2 days'],
+              ].map(([title, amount, duration]) => (
+                <div key={title} className="rounded-[16px] border border-[rgba(255,255,255,0.08)] bg-[#0B0F1A] p-5">
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                      <p className="font-black text-[#F9FAFB]">{title}</p>
+                      <p className="mt-2 inline-flex items-center gap-2 text-sm text-[#64748B]">
+                        <CalendarDays className="h-4 w-4" />
+                        {duration}
+                      </p>
+                    </div>
+                    <p className="font-mono text-sm font-black text-[#F9FAFB]">{amount}</p>
+                  </div>
+                </div>
+              ))}
             </div>
-          </div>
+          </section>
         </section>
-      </div>
 
-      <aside className="w-full lg:w-80 space-y-6">
-        <div className="glass p-6 rounded-3xl sticky top-24">
-          <p className="text-sm text-gray-400 mb-2">Total Project Budget</p>
-          <p className="text-4xl font-bold text-white mb-6">$2,500 <span className="text-sm text-gray-400">USDC</span></p>
-          <Button variant="primary" className="w-full h-12">Apply for this Job</Button>
-          <p className="text-[10px] text-center text-gray-500 mt-4 leading-relaxed">
-            Applying costs 5 credits (1 USDC). No fee if hired.
-          </p>
-        </div>
-      </aside>
+        <aside className="h-fit rounded-[20px] border border-[rgba(255,255,255,0.08)] bg-[#0B0F1A] p-6 lg:sticky lg:top-24">
+          <p className="text-sm font-bold uppercase tracking-wide text-[#64748B]">Total budget</p>
+          <p className="mt-2 text-4xl font-black text-[#F9FAFB]">$2,500 <span className="text-sm font-bold text-[#64748B]">USDC</span></p>
+          <div className="mt-6 space-y-3 rounded-[16px] bg-[#0B0F1A] p-4">
+            {['USDC escrow compatible', 'Wallet-signed approval', '5% platform commission'].map((item) => (
+              <div key={item} className="flex items-center gap-2 text-sm font-semibold text-[#64748B]">
+                <CheckCircle2 className="h-4 w-4 text-[#10B981]" />
+                {item}
+              </div>
+            ))}
+          </div>
+          <Button variant="primary" className="mt-6 w-full">
+            Apply with 1 token
+          </Button>
+          <div className="mt-5 flex items-start gap-3 rounded-[16px] border border-[rgba(255,255,255,0.08)] bg-[#0B0F1A] p-4 text-sm leading-6 text-[#64748B]">
+            <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-[#10B981]" />
+            Funds move only after the client signs a milestone approval transaction.
+          </div>
+        </aside>
+      </main>
     </div>
   );
 }
